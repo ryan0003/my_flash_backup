@@ -65,11 +65,18 @@ class flashbackup(object):
                     log_pos=self.log_pos, log_file=self.log_file,
                     server_id=self.server_id, only_events=(DeleteRowsEvent,UpdateRowsEvent,WriteRowsEvent),
                     fail_on_table_metadata_unavailable=True, freeze_schema=True,
-                    only_schemas=(self.schemas),
-                    only_tables=(self.tables),
+                    #only_schemas=(self.schemas),
+                    #only_tables=(self.tables),
                     blocking=True)
+        log_pos_list = []
         for binlogevent in stream:
-            log_pos = binlogevent.packet.log_pos
+            log_pos_list.append(binlogevent.packet.log_pos)
+            if len(log_pos_list) <=1 :
+                log_pos = 0
+            else:
+                log_pos = log_pos_list[0]
+                del log_pos_list[0]
+            #log_pos = binlogevent.packet.log_pos
             rows = binlogevent.rows
             table = binlogevent.table
             event_type=binlogevent.event_type
