@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # 语句分析类
-
+import datetime
+import decimal
 class analysis(object):
     def __init__(self,table,event_type,rows,log_pos,log_level):
         self.table = table
@@ -26,6 +27,13 @@ class analysis(object):
                 if type(v) == type(u'a'):
                     vl = v
                     p_v = p_v + "'%s'" % vl + ","
+                if type(v) == type(datetime.datetime.now()):
+                    vl = v
+                    p_v = p_v + "'%s'" % vl + ","
+                    # print type(before_values[p])
+                if type(v) == type(decimal.Decimal(1.1)):
+                    vl = v
+                    p_v = p_v + "'%s'" % vl + ","
             p_v = p_v[:-1]
             p = {'key': p_k, 'value': p_v}
             sql = "insert into %s (%s) value (%s)" % (table, p['key'], p['value'])
@@ -44,6 +52,13 @@ class analysis(object):
                 if type(value[p]) == type(u'a'):
                     vl = value[p]
                     p_k_v = p_k_v + u"`%s`='%s' and " % (p, vl)
+                if type(value[p]) == type(datetime.datetime.now()):
+                    vl = value[p]
+                    p_k_v = p_k_v + "`%s`='%s' and " % (p, str(vl))
+                    # print type(before_values[p])
+                if type(value[p]) == type(decimal.Decimal(1.1)):
+                    vl = value[p]
+                    p_k_v = p_k_v + "`%s`='%f' and " % (p, vl)
             p_k_v = p_k_v[:-4]
             sql = u"delete from %s where %s " % (table, p_k_v)
             result.append(sql)
@@ -64,6 +79,13 @@ class analysis(object):
                     if type(before_values[p]) == type(u'a'):
                         vl = before_values[p]
                         p_k_v_b = p_k_v_b + "`%s`='%s' and " % (p, vl)
+                    if type(before_values[p]) == type(datetime.datetime.now()):
+                        vl = before_values[p]
+                        p_k_v_b = p_k_v_b + "`%s`='%s' and " % (p, str(vl))
+                    #print type(before_values[p])
+                    if type(before_values[p]) == type(decimal.Decimal(1.1)):
+                        vl = before_values[p]
+                        p_k_v_b = p_k_v_b + "`%s`='%f' and " % (p, vl)
                 p_k_v_b = p_k_v_b[:-4]
                 keys_a = after_values.keys()
                 p_k_v_a = ''
